@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        ul#files li {
+            display: inline;
+            margin-right: 15px;
+            cursor:pointer;
+        }
+
+        #content {
+            height: 800px;
+            width: 80%;
+            margin-top: 10px;
+        }
+
+        #file_form {
+            margin-top: 20px;
+        }
+
+        #deleteName {
+            margin-top: 20px;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+
+        function listAllFiles() {
+            $.ajax({
+                url: "/listfile",
+                success: function (result) {
+                    $("#files").html("");
+                    for (i = 0; i < result.length; i++) {
+                        $("#files").append("<li onclick=\"showFile('"
+                            + result[i] + "')\">"
+                            + result[i] +
+                            "</li>")
+                    }
+                }
+            });
+        }
+
+        function checkRecovered() {
+            $.ajax({
+                url: "/keyrecovered",
+                success: function (result) {
+                    if (!result) {
+                        requirePass();
+                    }
+                }
+            })
+        }
+
+        function showFile(name){
+            $("#name").val(name);
+            $.ajax({
+                url: "/decrypt?name="+name,
+                success: function (result) {
+                    $("#content").val(result);
+                }
+            })
+        }
+
+        function newFile() {
+            var name = prompt("please input file name", "name");
+            if (name == null || name == "") {
+                return;
+            } else {
+                $("#file_name").html(name);
+            }
+        }
+
+        function saveFile() {
+                $.ajax({
+                    url: '/savefile',
+                    type: 'post',
+                    data: $('#file_form').serialize(),
+                    success: function () {
+                        alert("saved!")
+                        listAllFiles();
+                    }
+                });
+        }
+
+        function removeFile(){
+            let file = $("#deleteName").val();
+            $.ajax({
+                url : "/delete?name="+file,
+                success : function (result){
+                    alert("deleted");
+                    listAllFiles();
+                }
+            })
+        }
+
+        function requirePass() {
+            $.ajax({
+                url: "/keyexist",
+                success: function (result) {
+                    var text;
+                    if (result) {
+                        text = "key file found, please type password to recover it:";
+                        var pass = prompt(text, "password");
+                        if (pass == null || pass == "") {
+                            requirePass();
+                        } else {
+                            $.ajax({
+                                url: "/recoverkey?pass=" + pass,
+                                success: function (result) {
+                                    if (result) {
+                                        alert("key recovered!")
+                                    } else {
+                                        alert("wrong password!")
+                                        requirePass();
+                                    }
+
+                                }
+                            })
+                        }
+                    } else {
+                        text = "key file miss, please copy keyfile or generate new key, \n if you generate new key, all encrypted files will be deleted";
+                        var pass = prompt(text, "password");
+                        if (pass == null || pass == "") {
+                            requirePass();
+                        } else {
+                            $.ajax({
+                                url: "/genkey?pass=" + pass,
+                                success: function (result) {
+                                    alert("key generated!")
+                                }
+                            })
+                        }
+                    }
+                }
+            })
+        }
+
+        (() => {
+            checkRecovered();
+            listAllFiles();
+        })()
+    </script>
+</head>
+
+<body>
+    <button onclick="listAllFiles()">show files</button>
+    <ul id="files">
+    </ul>
+    <button onclick="newFile()">create file</button>
+    <form id="file_form">
+        <label>file name:</label>
+        <input type="text" id="name" name="name"><br>
+        <textarea id="content" name="content"></textarea>
+    </form>
+    <button onclick="saveFile()">save</button><br>
+    <input type="text" id="deleteName" name="name">
+    <button onclick="removeFile()">delete file</button>
+
+</body>
+
+</html>
