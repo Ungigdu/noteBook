@@ -25,6 +25,16 @@ module.exports = {
     decryptFile : decryptFile,
     deleteFile : deleteFile,
     keyRecovered : keyRecovered,
+    mkDirIfNeeded : mkDirIfNeeded,
+}
+
+function mkDirIfNeeded(){
+    if(!fs.existsSync(encrypted_prefix)){
+        fs.mkdirSync(encrypted_prefix);
+    }
+    if(!fs.existsSync("./key/")){
+        fs.mkdirSync("./key/");
+    }
 }
 
 function genKey(pass){

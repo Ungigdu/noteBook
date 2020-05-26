@@ -17,6 +17,8 @@ function retText(res, data) {
 }
 
 http.createServer(function (req, res) {
+  file.mkDirIfNeeded()
+  
   var q = url.parse(req.url, true).query;
   if (req.url == "/listfile") {
     return retJson(res, file.allFiles())
