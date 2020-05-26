@@ -2,6 +2,7 @@ var http = require('http');
 var file = require("./module/file_management")
 var fs = require('fs');
 var url = require("url");
+var git = require("./module/git")
 const { parse } = require('querystring');
 
 function retJson(res, data) {
@@ -51,6 +52,12 @@ http.createServer(function (req, res) {
     })
   }else if(/^\/delete/.test(req.url)){
     file.deleteFile(q.name);
+    return retJson(res, true);
+  }else if(req.url == "/push"){
+    git.push()
+    return retJson(res, true);
+  }else if(req.url == "/pull"){
+    git.pull()
     return retJson(res, true);
   } else {
     fs.readFile('static/index.html', function (err, data) {

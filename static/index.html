@@ -62,6 +62,22 @@
             })
         }
 
+        function push(){
+            $.ajax({
+                url: "/push",
+                success: function (result) {
+                }
+            })
+        }
+
+        function push(){
+            $.ajax({
+                url: "/pull",
+                success: function (result) {
+                }
+            })
+        }
+        
         function newFile() {
             var name = prompt("please input file name", "name");
             if (name == null || name == "") {
@@ -144,7 +160,8 @@
 </head>
 
 <body>
-    <button onclick="listAllFiles()">show files</button>
+    <button onclick="pull()">pull</button>
+    <button onclick="listAllFiles()">show files</button><br>
     <ul id="files">
     </ul>
     <button onclick="newFile()">create file</button>
@@ -153,7 +170,8 @@
         <input type="text" id="name" name="name"><br>
         <textarea id="content" name="content"></textarea>
     </form>
-    <button onclick="saveFile()">save</button><br>
+    <button onclick="saveFile()">save</button> 
+    <button onclick="push()">push</button><br>
     <input type="text" id="deleteName" name="name">
     <button onclick="removeFile()">delete file</button>
 
