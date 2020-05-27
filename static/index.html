@@ -77,15 +77,6 @@
                 }
             })
         }
-        
-        function newFile() {
-            var name = prompt("please input file name", "name");
-            if (name == null || name == "") {
-                return;
-            } else {
-                $("#file_name").html(name);
-            }
-        }
 
         function saveFile() {
                 $.ajax({
@@ -164,7 +155,6 @@
     <button onclick="listAllFiles()">show files</button><br>
     <ul id="files">
     </ul>
-    <button onclick="newFile()">create file</button>
     <form id="file_form">
         <label>file name:</label>
         <input type="text" id="name" name="name"><br>
