@@ -146,6 +146,13 @@
         (() => {
             checkRecovered();
             listAllFiles();
+            $(this).keydown(function(e){
+                if(e.metaKey && e.keyCode == 83){
+                    e.returnValue = false;
+                    e.preventDefault();
+                    saveFile();
+                }
+            })
         })()
     </script>
 </head>
