@@ -44,7 +44,7 @@ function genKey(pass){
 }
 
 function allFiles(){
-    return fs.readdirSync(encrypted_prefix).map((x)=>x.split(".")[0]);
+    return fs.readdirSync(encrypted_prefix).map((x)=>x.split(".")[0]).filter((x)=>x.length!=0);
 }
 
 function saveKey(key){
