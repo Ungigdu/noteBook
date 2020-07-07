@@ -59,6 +59,10 @@ http.createServer(function (req, res) {
   }else if(req.url == "/pull"){
     git.pull()
     return retJson(res, true);
+  }else if(req.url == "/jquery.min.js"){
+    fs.readFile('static/jquery.min.js', function (err, data) {
+      return retText(res, data)
+    });
   } else {
     fs.readFile('static/index.html', function (err, data) {
       return retText(res, data)
