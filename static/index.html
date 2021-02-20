@@ -4,18 +4,27 @@
 <head>
 
   <link rel="shortcut icon" type="image/png" href="/favicon.ico" />
+  <link rel="stylesheet" href="/css/uikit.min.css" />
+
+  <script src="/js/uikit.min.js"></script>
+  <script src="/js/vue.min.js"></script>
+  <script src="/js/uikit-icons.min.js"></script>
+
 
   <style>
-    ul#files li {
-      display: inline;
-      margin-right: 15px;
-      cursor: pointer;
+    #files {
+      padding: 30px;
+    }
+
+    #files a {
+      font-size: small;
     }
 
     #content {
-      height: 800px;
-      width: 80%;
-      margin-top: 10px;
+      position: relative;
+      left: -22px;
+      top: -40px;
+      width: 100%;
     }
 
     #file_form {
@@ -30,39 +39,70 @@
       position: relative;
       left: -5000px;
     }
+
+    #github {
+      position: relative;
+      top: -42px
+    }
+
+    #save {
+      position: relative;
+      left: -22px;
+      top: -20px;
+    }
   </style>
-  <script src="/js/jquery.min.js"></script>
-  <script src="/js/vue.min.js"></script>
+
 
 
 </head>
 
 <body>
   <div id="app">
-    <button onclick="pull()">pull</button>
-    <button onclick="listAllFiles()">show files</button><br>
-    <button v-on:click="createFile">create file</button>
-    <ul id="files">
-      <li v-for="name in fileList" v-on:click="showFileT(name)">{{ name }}</li>
-    </ul>
-    <label>file name:</label>
-    <span id="show-name">{{ showName }}</span>
 
-    <form id="file_form" @submit.prevent="saveFile">
 
-      <input id="name" name="name" type="text" v-model="fileName"><br>
-      <textarea id="content" name="content" v-model="content"></textarea>
-      <button class="button" type="submit" value="Submit">save</button>
-    </form>
+    <div class="uk-grid-divider" uk-grid>
+      <div>
+        <div id="files">
 
-    <button v-on:click=" push()">push</button><br>
-    <input type="text" id="deleteName" name="name">
-    <button onclick="removeFile()">delete file</button>
+          <button v-on:click="createFile" uk-icon="plus"></button>
+          <button class="uk-margin-left" v-on:click="removeFile" uk-icon="trash"></button>
+
+          <hr class="uk-divider-small">
+          <ul class="uk-nav uk-nav-default">
+            <li v-for="(name, index) in fileList" v-on:click="showFileT(index)">
+              <a :class="{'uk-text-bold uk-text-primary': activeIndex == index}" href="#">{{ name }}</a></li>
+          </ul>
+
+          <hr class="uk-divider-small">
+
+
+          <button class="uk-button uk-button-primary" v-on:click="push"><span uk-icon="github"></span><span
+              uk-icon="push"></span></button>
+          <br>
+          <button class="uk-button uk-button-danger uk-margin-top" v-on:click="pull"><span uk-icon="github"></span><span
+              uk-icon="pull"></span></button>
+
+        </div>
+      </div>
+
+
+
+      <div class="uk-width-expand">
+
+        <form id="file_form" @submit.prevent="saveFile">
+          <input id="name" name="name" type="text" v-model="fileName"><br>
+          <textarea id="content" class="uk-textarea" rows="30" name="content" v-model="content"></textarea>
+          <br>
+          <button id="save" class="uk-button uk-button-secondary" type="submit" value="Submit">save</button>
+        </form>
+
+      </div>
+    </div>
+
+
+
   </div>
-
-
   <script src="/js/main.js"></script>
-
 </body>
 
 </html>

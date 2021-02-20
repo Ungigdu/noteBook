@@ -1,13 +1,16 @@
 const http = require('http');
-const file = require("./module/file_management")
 const fs = require('fs');
 const url = require("url");
+const open = require('open');
+const file = require("./module/file_management")
 const git = require("./module/git")
+
+
 const {
   parse
 } = require('querystring');
 
-function retFail() {
+function retFail(res) {
   res.writeHead(404)
   res.end()
 }
@@ -20,7 +23,7 @@ function retJson(res, data) {
     res.write(JSON.stringify(data));
     res.end();
   } catch (error) {
-    retFail()
+    retFail(res)
   }
 }
 
@@ -32,7 +35,7 @@ function retText(res, data) {
     res.write(data);
     res.end();
   } catch (error) {
-    retFail()
+    retFail(res)
   }
 }
 
@@ -65,11 +68,17 @@ function handle(req, res) {
     } else if (file_type == "ico") {
       content_type = "image/vnd.microsoft.icon"
     }
-    res.writeHead(200, {
-      'Content-Type': content_type
-    });
-    res.write(data);
-    res.end();
+
+    try {
+      res.writeHead(200, {
+        'Content-Type': content_type
+      });
+      res.write(data);
+      res.end();
+    } catch (error) {
+      retFail(res)
+    }
+
 
   });
 }
@@ -111,7 +120,7 @@ function regPath() {
         body += chunk.toString();
       });
       req.on("end", () => {
-        d = parse(body);
+        d = JSON.parse(body);
         file.encryptFile(d.name, d.content)
         retJson(res, true);
       })
@@ -136,6 +145,8 @@ function regPath() {
     register(pf)
   }
 }
+
+open('http://localhost:4321');
 
 http.createServer(function (req, res) {
   file.mkDirIfNeeded()

@@ -4,17 +4,14 @@ const app = Vue.createApp({
       fileList: [],
       fileName: "",
       content: "",
+      activeIndex: -1,
     }
   },
   created() {
     this.checkRecovered();
     this.listAllFiles();
   },
-  computed: {
-    showName() {
-      return this.fileName
-    }
-  },
+  computed: {},
   methods: {
     listAllFiles() {
       fetchData(_url("/listfile")).then(result => {
@@ -28,20 +25,22 @@ const app = Vue.createApp({
         }
       })
     },
-    showFileT(name) {
-      this.fileName = name
+    showFileT(index) {
+      this.fileName = this.fileList[index]
+      this.activeIndex = index
       fetchData(_url("/decryptT"), {
-        name: name
+        name: this.fileName
       }).then(result => {
-        console.log(result)
         this.content = result
       })
     },
     createFile() {
       var name = prompt("new file name", "new_file");
-      if (name == "" || name == null) {
+      if (name == "") {
         alert("name is empty!")
         return this.createFile()
+      } else if (name == null) {
+        return
       }
       fetchData(_url("/listfile")).then(result => {
         if (result.includes(name)) {
@@ -49,13 +48,7 @@ const app = Vue.createApp({
         } else {
           this.fileName = name
           this.content = ""
-          fetch(_url("/savefile"), {
-            method: "post",
-            body: $('#file_form').serialize(),
-          }).then(result => {
-            alert("saved!")
-            this.listAllFiles();
-          })
+          this.saveFile()
         }
       })
     },
@@ -68,14 +61,17 @@ const app = Vue.createApp({
     saveFile() {
       fetch(_url("/savefile"), {
         method: "post",
-        body: $('#file_form').serialize(),
+        body: JSON.stringify({
+          name: this.fileName,
+          content: this.content
+        }),
       }).then(result => {
         alert("saved!")
         this.listAllFiles();
       })
     },
     removeFile() {
-      let file = $("#deleteName").val();
+      var file = prompt("input file name to be deleted");
       fetchData(_url("/listfile")).then(result => {
         if (!result.includes(file)) {
           alert("file not exists!")
@@ -84,7 +80,7 @@ const app = Vue.createApp({
             name: file
           }).then(result => {
             alert("deleted");
-            listAllFiles();
+            this.listAllFiles();
           })
         }
       })
