@@ -4,3 +4,4 @@ key
 .gitignore
 /encrypted
 /key
+node_modules
